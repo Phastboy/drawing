@@ -4,14 +4,10 @@ Board
 ``` mermaid
 classDiagram
     direction TB
-
     class App {
-        -running: bool
-        -current_screen: Screen
         +run()
         +handle_event()
         +quit()
-        +get_instance() App
     }
 
     class Screen {
@@ -32,8 +28,4 @@ classDiagram
     App --> ScreenFactory : Uses
     ScreenFactory --> Screen : Creates
     Screen <|-- WelcomeScreen : Implements
-
-    %% Singleton Pattern
-    App <-- App : "Static Instance Access"
-
 ```
