@@ -12,12 +12,12 @@ classDiagram
 
     class Screen {
         <<Abstract>>
-        +draw()
+        +render()
         +handle_event()
     }
 
     class WelcomeScreen {
-        +draw()
+        +render()
         +handle_event()
     }
 
