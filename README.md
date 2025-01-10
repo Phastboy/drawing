@@ -65,7 +65,7 @@ classDiagram
         +render()
     }
 
-    App --> ScreenManager : Manages
+    App --> ScreenManager : Singleton
     ScreenManager --> Screen : Manages
     Screen --> RenderUI : Contains
     Screen --> StateManager : Observes
