@@ -10,16 +10,15 @@ classDiagram
         +quit()
     }
 
-    class Screen {
-        <<Abstract>>
-        +render_ui: RenderUI
-        +handle_event(event: Event)
-        +setup_ui(): void
+    class ScreenManager {
+        +transition_to(screen_type: ScreenType)
+        +render_current_screen()
     }
 
-    class WelcomeScreen {
-        +setup_ui()
-        +handle_event(event: Event)
+    class Screen {
+        +render_ui: RenderUI
+        +state_manager: StateManager
+        +setup_ui(): void
     }
 
     class RenderUI {
@@ -27,6 +26,28 @@ classDiagram
         +remove_component(component: UIComponent)
         +handle_event(event: Event)
         +render()
+        +layout_manager: LayoutManager
+        +animation_manager: AnimationManager
+    }
+
+    class StateManager {
+        +set_state(key, value)
+        +get_state(key)
+        +subscribe(listener)
+    }
+
+    class ThemeManager {
+        +apply_theme(component)
+    }
+
+    class LayoutManager {
+        <<Interface>>
+        +apply_layout(components)
+    }
+
+    class AnimationManager {
+        <<Interface>>
+        +animate(component)
     }
 
     class UIComponent {
@@ -44,21 +65,15 @@ classDiagram
         +render()
     }
 
-    class ScreenManager {
-        +set_default_screen(screen: Screen)
-        +transition_to(screen_type: ScreenType)
-        +get_current_screen(): Screen
-        +handle_event(event: Event)
-        +render_current_screen()
-    }
-
     App --> ScreenManager : Manages
     ScreenManager --> Screen : Manages
     Screen --> RenderUI : Contains
+    Screen --> StateManager : Observes
+    RenderUI --> LayoutManager : Uses
+    RenderUI --> AnimationManager : Uses
     RenderUI --> UIComponent : Manages
     UIComponent <|-- Button : Implements
     UIComponent <|-- Label : Implements
-    Screen <|-- WelcomeScreen : Implements
 
 ```
 
