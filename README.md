@@ -13,12 +13,21 @@ classDiagram
     class ScreenManager {
         +transition_to(screen_type: ScreenType)
         +render_current_screen()
+        +transition(action: TransitionAction)
+        +history: List~ScreenState~
+        +current: ScreenState
     }
 
     class Screen {
         +render_ui: RenderUI
         +state_manager: StateManager
+        +state: ScreenState
         +setup_ui(): void
+    }
+
+    class ScreenState {
+        +active: boolean
+        +event: Event
     }
 
     class RenderUI {
@@ -36,37 +45,15 @@ classDiagram
         +subscribe(listener)
     }
 
-    class ThemeManager {
-        +apply_theme(component)
-    }
-
-    class LayoutManager {
-        <<Interface>>
-        +apply_layout(components)
-    }
-
-    class AnimationManager {
-        <<Interface>>
-        +animate(component)
-    }
-
-    class UIComponent {
-        <<Abstract>>
-        +render()
-        +handle_event(event: Event)
-    }
-
-    class Button {
-        +render()
-        +handle_event(event: Event)
-    }
-
-    class Label {
-        +render()
+    class TransitionAction {
+        <<Enum>>
+        +Next
+        +Previous
     }
 
     App --> ScreenManager : Singleton
     ScreenManager --> Screen : Manages
+    Screen --> ScreenState : Contains
     Screen --> RenderUI : Contains
     Screen --> StateManager : Observes
     RenderUI --> LayoutManager : Uses
@@ -74,7 +61,6 @@ classDiagram
     RenderUI --> UIComponent : Manages
     UIComponent <|-- Button : Implements
     UIComponent <|-- Label : Implements
-
 ```
 
 ``` mermaid
