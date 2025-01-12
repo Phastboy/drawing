@@ -3,92 +3,83 @@ Board
 
 ``` mermaid
 classDiagram
-    direction TB
-    class App {
-        +run()
-        +handle_event(event: Event)
-        +quit()
-    }
+direction TB
 
-    class ScreenManager {
-        +transition_to(screen_type: ScreenType)
-        +render_current_screen()
-    }
+class Application {
+    +run(terminal: Terminal, uiRenderer: UIRenderer): Result
+}
 
-    class Screen {
-        +render_ui: RenderUI
-        +state_manager: StateManager
-        +setup_ui(): void
-    }
+class ComponentManager {
+    +addComponent(component: UIComponent)
+    +removeComponent(index: int)
+    +render(frame: Frame)
+    +handleEvent(event: Event)
+    -components: List<UIComponent>
+}
 
-    class RenderUI {
-        +add_component(component: UIComponent)
-        +remove_component(component: UIComponent)
-        +handle_event(event: Event)
-        +render()
-        +layout_manager: LayoutManager
-        +animation_manager: AnimationManager
-    }
+class ScreenManager {
+    +transitionTo(screen: Screen)
+    +render(terminal: Terminal, uiRenderer: UIRenderer): Result
+    +handleEvent(event: Event, uiRenderer: UIRenderer): Screen
+    -current: Screen
+    -state: State
+}
 
-    class StateManager {
-        +set_state(key, value)
-        +get_state(key)
-        +subscribe(listener)
-    }
+class Screen {
+    +setupUI(): UIRenderer
+    +render(terminal: Terminal, uiRenderer: UIRenderer): Result
+    +handleEvent(event: Event, state: State, uiRenderer: UIRenderer): Screen
+}
 
-    class ThemeManager {
-        +apply_theme(component)
-    }
+class UIRenderer {
+    +addComponent(component: UIComponent)
+    +removeComponent(index: int)
+    +render(frame: Frame)
+    +handleEvent(event: Event)
+    -components: List<UIComponent>
+}
 
-    class LayoutManager {
-        <<Interface>>
-        +apply_layout(components)
-    }
+class UIComponent {
+    <<interface>>
+    +render(frame: Frame)
+    +handleEvent(event: Event): Result
+}
 
-    class AnimationManager {
-        <<Interface>>
-        +animate(component)
-    }
+class TextBlock {
+    +new(text: String, area: Rect, active: bool)
+    +setActive(active: bool)
+    +isActive(): bool
+    +render(frame: Frame)
+    +handleEvent(event: Event): Result
+    -text: String
+    -area: Rect
+    -active: bool
+}
 
-    class UIComponent {
-        <<Abstract>>
-        +render()
-        +handle_event(event: Event)
-    }
+class State {
+    <<interface>>
+    +set(key: String, value: String)
+    +get(key: String): String
+    +clear()
+    +setActive(active: bool)
+    +isActive(): bool
+}
 
-    class Button {
-        +render()
-        +handle_event(event: Event)
-    }
+class InMemoryState {
+    +set(key: String, value: String)
+    +get(key: String): String
+    +clear()
+    +setActive(active: bool)
+    +isActive(): bool
+    -state: HashMap<String, String>
+    -active: bool
+}
 
-    class Label {
-        +render()
-    }
-
-    App --> ScreenManager : Singleton
-    ScreenManager --> Screen : Manages
-    Screen --> RenderUI : Contains
-    Screen --> StateManager : Observes
-    RenderUI --> LayoutManager : Uses
-    RenderUI --> AnimationManager : Uses
-    RenderUI --> UIComponent : Manages
-    UIComponent <|-- Button : Implements
-    UIComponent <|-- Label : Implements
-
-```
-
-``` mermaid
-graph TD
-    A["`Mental Activity (Èrò)`"]
-    B["`Language (Èdè)`"]
-    C["`Speech (Òrò)`"]
-    D["`Message (Àrokò)`"]
-    A --> B
-    B --> C
-    C --> D
-    
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#cff,stroke:#333,stroke-width:2px
-    style C fill:#fcf,stroke:#333,stroke-width:2px
-    style D fill:#cfc,stroke:#333,stroke-width:2px
+Application --> ScreenManager
+ScreenManager --> Screen
+Screen --> UIRenderer
+Screen --> State
+UIRenderer --> UIComponent
+UIComponent <|-- TextBlock
+State <|-- InMemoryState
 ```
