@@ -3,6 +3,7 @@ Board
 
 ``` mermaid
 classDiagram
+
 direction TB
 
 class Application {
